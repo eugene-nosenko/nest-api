@@ -1,12 +1,12 @@
-import { JWT_SECRET } from '@app/config';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { sign } from 'jsonwebtoken';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/createUser.dto';
-import { LoginUserDto } from './dto/loginUser.dto';
-import { UserResponseInterface } from './types/userResponse.interface';
 import { UserEntity } from './user.entity';
+import { sign } from 'jsonwebtoken';
+import { JWT_SECRET } from '@app/config';
+import { UserResponseInterface } from './types/userResponse.interface';
+import { LoginUserDto } from './dto/loginUser.dto';
 import { compare } from 'bcrypt';
 import { UpdateUserDto } from './dto/updateUser.dto';
 
@@ -16,7 +16,6 @@ export class UserService {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
   ) {}
-
   async createUser(createUserDto: CreateUserDto): Promise<UserEntity> {
     const userByEmail = await this.userRepository.findOne({
       email: createUserDto.email,
@@ -33,15 +32,20 @@ export class UserService {
     const newUser = new UserEntity();
     Object.assign(newUser, createUserDto);
     console.log('newUser', newUser);
-    return this.userRepository.save(newUser);
+    return await this.userRepository.save(newUser);
+  }
+
+  async findById(id: number): Promise<UserEntity> {
+    return this.userRepository.findOne(id);
   }
 
   async login(loginUserDto: LoginUserDto): Promise<UserEntity> {
     const user = await this.userRepository.findOne(
-      { email: loginUserDto.email },
+      {
+        email: loginUserDto.email,
+      },
       { select: ['id', 'username', 'email', 'bio', 'image', 'password'] },
     );
-    console.log('user', user);
 
     if (!user) {
       throw new HttpException(
@@ -63,12 +67,7 @@ export class UserService {
     }
 
     delete user.password;
-
     return user;
-  }
-
-  findById(id: number): Promise<UserEntity> {
-    return this.userRepository.findOne(id);
   }
 
   async updateUser(
@@ -80,7 +79,7 @@ export class UserService {
     return await this.userRepository.save(user);
   }
 
-  generateJWT(user: UserEntity): string {
+  generateJwt(user: UserEntity): string {
     return sign(
       {
         id: user.id,
@@ -95,7 +94,7 @@ export class UserService {
     return {
       user: {
         ...user,
-        token: this.generateJWT(user),
+        token: this.generateJwt(user),
       },
     };
   }
