@@ -3,7 +3,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 import { ArticleEntity } from './article.entity';
-import { CreateArtcleDto } from './dto/createArticle.dto';
+import { CreateArticleDto } from './dto/createArticle.dto';
 import { ArticleResponseInterface } from './types/articleResponse.interface';
 import slugify from 'slugify';
 
@@ -16,16 +16,16 @@ export class ArticleService {
 
   async createArticle(
     currentUser: UserEntity,
-    createArtcleDto: CreateArtcleDto,
+    createArticleDto: CreateArticleDto,
   ): Promise<ArticleEntity> {
     const article = new ArticleEntity();
-    Object.assign(article, createArtcleDto);
+    Object.assign(article, createArticleDto);
 
     if (!article.tagList) {
       article.tagList = [];
     }
 
-    article.slug = this.getSlug(createArtcleDto.title);
+    article.slug = this.getSlug(createArticleDto.title);
 
     article.author = currentUser;
 
@@ -58,7 +58,7 @@ export class ArticleService {
 
   async updateArticle(
     slug: string,
-    updateArticleDto: CreateArtcleDto,
+    updateArticleDto: CreateArticleDto,
     currentUserId: number,
   ): Promise<ArticleEntity> {
     const article = this.findBySlug(slug);

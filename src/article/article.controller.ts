@@ -15,7 +15,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { ArticleService } from './article.service';
-import { CreateArtcleDto } from './dto/createArticle.dto';
+import { CreateArticleDto } from './dto/createArticle.dto';
 import { ArticleResponseInterface } from './types/articleResponse.interface';
 
 @Controller('articles')
@@ -27,11 +27,11 @@ export class ArticleController {
   @UsePipes(new ValidationPipe())
   async create(
     @User() currentUser: UserEntity,
-    @Body('article') createArtcleDto: CreateArtcleDto,
+    @Body('article') createArticleDto: CreateArticleDto,
   ): Promise<ArticleResponseInterface> {
     const article = await this.articleService.createArticle(
       currentUser,
-      createArtcleDto,
+      createArticleDto,
     );
     return this.articleService.buildArticleResponse(article);
   }
@@ -59,7 +59,7 @@ export class ArticleController {
   async updateArticle(
     @User('id') currentUserId: number,
     @Param('slug') slug: string,
-    @Body('article') updateArticleDto: CreateArtcleDto,
+    @Body('article') updateArticleDto: CreateArticleDto,
   ): Promise<ArticleResponseInterface> {
     const article = await this.articleService.updateArticle(
       slug,

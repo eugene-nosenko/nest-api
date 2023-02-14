@@ -1,6 +1,6 @@
 import { IsNotEmpty } from 'class-validator';
 
-export class CreateArtcleDto {
+export class CreateArticleDto {
   @IsNotEmpty()
   readonly title: string;
 
