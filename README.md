@@ -14,6 +14,12 @@ $ yarn db:seed
 $ yarn start
 ```
 
-## License
+## API Endpoints Specs
+
+https://realworld-docs.netlify.app/docs/specs/backend-specs/endpoints
+
+## Frontend for API test
+
+https://github.com/gothinkster/react-redux-realworld-example-app
 
 Nest is [MIT licensed](LICENSE).
